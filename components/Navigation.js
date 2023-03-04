@@ -172,7 +172,9 @@ export default function Navigation (props) {
                   }}
             />
             <Tab.Screen name="TabProfile" 
-            component={ProfileStackScreen}
+            // component={ProfileStackScreen}
+            children={()=><ProfileStackScreen setLoggedInState={props.setLoggedInState}/>}
+
             options={{
                 // tabBarColor:'pink',
                    tabBarLabel: 'Profile',
