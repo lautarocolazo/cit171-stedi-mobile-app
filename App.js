@@ -6,7 +6,7 @@ import OnboardingScreen from './screens/OnboardingScreen';
 import Home from './screens/Home';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import  * as LocalAuthentication from 'expo-local-authentication'
 
 
 
@@ -23,6 +23,19 @@ const App = () =>{
   const [phoneNumber,setPhoneNumber] = React.useState("");
   const [oneTimePassword, setOneTimePassword] = React.useState("");
   const [homeTodayScore, setHomeTodayScore] = React.useState(0);
+  const [isBiometricSupported, setIsBiometricSupported] = React.useState(false);
+  const [isBiometricEnrolled, setIsBiometricEnrolled] = React.useState(false);
+
+  useEffect(() => {
+    (async() => {
+      const compatible = await LocalAuthentication.hasHardwareAsync();
+      setIsBiometricSupported(compatible);
+
+      const enrolled = await LocalAuthentication.isEnrolledAsync();
+      setIsBiometricEnrolled(enrolled);
+
+    })();
+  });
 
   useEffect(()=>{//this is code that has to run before we show app screen
    const getSessionToken = async()=>{
@@ -57,6 +70,12 @@ return(
     return (
       <View>
         <Text style={styles.title}>Welcome Back</Text>
+        <Text> {isBiometricSupported ? 'Your device is compatible with biometrics'
+        : 'Your device is not compatible with biometrics'}
+        </Text>
+        <Text> {isBiometricEnrolled ? 'You have a fingerprint or face biometrics'
+        : 'You have not saved a fingerprint or face biometrics'}
+        </Text>
         <TextInput 
           value={phoneNumber}
           onChangeText={setPhoneNumber}
@@ -64,6 +83,21 @@ return(
           placeholderTextColor='#4251f5' 
           placeholder='Cell Phone'>          
         </TextInput>
+        <Button
+          title='Biometric Authentication'
+          style={styles.button}
+          onPress={async () =>{
+            const biometricAuth = await LocalAuthentication.authenticateAsync({
+              promptMessage: 'Login with Biometrics',
+              disableDeviceFallback: true,
+              cancelLabel: 'Cancel'
+
+            }) 
+            console.log("biometricAuth", biometricAuth)
+          }}
+        >
+          
+        </Button>
         <Button
           title='Send'
           style={styles.button}
