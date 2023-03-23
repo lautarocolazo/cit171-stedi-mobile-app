@@ -46,8 +46,9 @@ const Profile = (props) => {
   });
 
   const myCustomerShare = async() =>{
+    const sessionToken = await AsyncStorage.getItem('sessionToken');
     const shareOptions = {
-      message: 'This is a test'
+      message: `https://dev.stedi.me/timer.html#${sessionToken}`
     }
     try{
       const shareResponse = await Share.share(shareOptions)

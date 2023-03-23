@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, Share, Linking} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, Share, Linking, Button} from 'react-native';
 import { Accelerometer } from 'expo-sensors';
 import getSpikesFromAccelerometer from '../utils/StepCalculator';
 import CircularProgress from 'react-native-circular-progress-indicator';
@@ -189,8 +189,9 @@ setCounter(3);
 //share 
 
 const shareProgress = async() =>{
+  const sessionToken = await AsyncStorage.getItem('sessionToken');
   const shareOptions = {
-    message: 'This is a test'
+    message: `https://dev.stedi.me/timer.html#${sessionToken}`
   }
   try{
     const shareResponse = await Share.share(shareOptions)
@@ -326,6 +327,12 @@ elevation: 4}}>
       style={styles.button}
     >
       <Text>{subscription ? 'Stop' : 'GO'}</Text>
+     </TouchableOpacity>
+  <TouchableOpacity
+     onPress={ shareProgress }
+      style={styles.button}
+    >
+      <Text>{'Add Spotter'}</Text>
      </TouchableOpacity>
 
      </CardContent>
